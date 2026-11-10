@@ -4,7 +4,7 @@ const {Schema}=mongoose;
 const UserSchema=new Schema({
     firstName:{
         type:String,
-        require:true,
+        required:true,
         minLength:3,
         maxLength:20
     },
@@ -15,7 +15,7 @@ const UserSchema=new Schema({
     },
     emailId:{
         type:String,
-        require:true,
+        required:true,
         unique:true,
         trim:true,
         lowercase:true,
