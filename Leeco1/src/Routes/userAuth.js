@@ -15,4 +15,4 @@ authRouter.post('/admin/register',adminMiddleware,adminRegister);
 //GetProfile
 // authRouter.post('/getProfile',getProfile);
 
-module.exports=authRouter;
+module.exports=authRouter;   
