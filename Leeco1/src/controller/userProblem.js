@@ -12,9 +12,16 @@ const createProblem = async(req,res)=>{
 
             const languageId=getLanguageById(language);
 
-            
+            const submission=visibleTestCases.map((input,ouptput)=>({
+                source_code:completeCode,
+                language_id:language,
+                stdin:input,
+                expected_ouput:ouptut
+            }));
 
+            const submitResult=await submmitBatch(submissions);
         }
+
 
     }
     catch(err){

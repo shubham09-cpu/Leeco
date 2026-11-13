@@ -1,5 +1,5 @@
-
-const getLanguageById=()=>{
+const axios=require("axios")
+const getLanguageById=(lang)=>{
 
     const language={
         "c++":54,
@@ -10,4 +10,8 @@ const getLanguageById=()=>{
     return language[lang.toLowerCase()];
 }
 
-module.exports=getLanguageById;
+const submmitBatch=(submissions)=>{
+
+    
+}
+module.exports={getLanguageById,submmitBatch};

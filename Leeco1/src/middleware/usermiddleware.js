@@ -25,7 +25,7 @@ const userMiddleware=async(req,res,next)=>{
 
         //Redis ke blocklist men check krenge ab 
 
-        const IsBlocked=await redisClient.exists(`token${token}`);
+        const IsBlocked=await redisClient.exists(`token:${token}`);
 
         if(IsBlocked)
             throw new Error("Invalid Token");
