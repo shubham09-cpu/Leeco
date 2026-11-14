@@ -1,34 +1,54 @@
-const getLanguageById=require("../utils/Problemutility");
+const { getLanguageById, submitBatch, submitToken } = require("../utils/Problemutility");
+const Problem = require("../models/problem");
 
-const createProblem = async(req,res)=>{
+const createProblem = async (req, res) => {
+    const {
+        title,
+        description,
+        difficulty,
+        tags,
+        visibleTestCases,
+        hiddenTestCases,
+        startCode,
+        referenceSolution,
+    } = req.body;
 
-    const {title,description,difficulty,tags,visibleTestCases,
-        hiddenTestCases,startCode,referenceSolution
-        ,problemCreator}=req.body;
+    try {
+        for (const { language, CompleteCode } of referenceSolution) {
+            const languageId = getLanguageById(language);
 
-    try{
+            if (!languageId) {
+                return res.status(400).send(`Unsupported language: ${language}`);
+            }
 
-        for(const {language,completeCode} of referenceSolution){
-
-            const languageId=getLanguageById(language);
-
-            const submission=visibleTestCases.map((testcases)=>({
-                source_code:completeCode,
-                language_id:language,
-                stdin:testcases.input,
-                expected_ouput:testcases.ouptut
+            const submissions = visibleTestCases.map((testcase) => ({
+                source_code: CompleteCode,
+                language_id: languageId,
+                stdin: testcase.input,
+                expected_output: testcase.output,
             }));
 
-            const submitResult=await submmitBatch(submissions);
+            const submitResult = await submitBatch(submissions);
+            const resultToken = submitResult.map((value) => value.token);
+            const testResult = await submitToken(resultToken);
 
-            const resultToken =submitResult.map((value)=>value.token);
-
-            const testResult=await submitToken(resultToken);
+            for (const test of testResult) {
+                if (test.status_id != 3) {
+                    return res.status(400).send(`Test case failed with status: ${test.status?.description || test.status_id}`);
+                }
+            }
         }
 
+        // Store in DB using ...req.body
+        await Problem.create({
+            ...req.body,
+            problemCreator: req.result._id,
+        });
 
+        res.status(201).send("Problem Saved Successfully");
+    } catch (err) {
+        res.status(400).send("Error: " + err.message);
     }
-    catch(err){
+};
 
-    }
-}
+module.exports = createProblem;
