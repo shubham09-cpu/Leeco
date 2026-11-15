@@ -51,4 +51,122 @@ const createProblem = async (req, res) => {
     }
 };
 
-module.exports = createProblem;
+const updateProblem = async (req, res) => {
+
+    const { id } = req.params;
+
+    const {
+        title,
+        description,
+        difficulty,
+        tags,
+        visibleTestCases,
+        hiddenTestCases,
+        startCode,
+        referenceSolution,
+    } = req.body;
+
+    try {
+
+        if(!id){
+            return res.status(400).send("Missing IF Field");
+        }
+
+        const DsaProblem = await Problem.findById(id);
+        if(!DsaProblem){
+            return res.status(404).send("ID is not present in server");
+        }
+
+        for (const { language, CompleteCode } of referenceSolution) {
+            const languageId = getLanguageById(language);
+
+            if (!languageId) {
+                return res.status(400).send(`Unsupported language: ${language}`);
+            }
+
+            const submissions = visibleTestCases.map((testcase) => ({
+                source_code: CompleteCode,
+                language_id: languageId,
+                stdin: testcase.input,
+                expected_output: testcase.output,
+            }));
+
+            const submitResult = await submitBatch(submissions);
+            const resultToken = submitResult.map((value) => value.token);
+            const testResult = await submitToken(resultToken);
+
+            for (const test of testResult) {
+                if (test.status_id != 3) {
+                    return res.status(400).send(`Test case failed with status: ${test.status?.description || test.status_id}`);
+                }
+            }
+        }
+
+        const newProblem = await Problem.findByIdAndUpdate(id,{...req.body},{runValidators:true,new:true});
+        res.status(200).send(newProblem);
+
+
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+}
+
+const deleteProblem=async(req,res)=>{
+
+    const {id}=req.params;
+    try{
+        if(!id)
+            return res.status(404).send("Id is Missing");
+
+        const deletedProblem=await Problem.findByIdAndDelete(id);
+
+        if(!deletedProblem)
+            return res.status(404).send("Problem is Missing");
+
+        res.status(200).send(deleteProblem);
+    }
+    catch(err){
+        res.status(404).send(err);
+    }
+}
+
+const getProblemById=async(req,res)=>{
+    const {id}=req.params;
+
+    try{
+        if(!id)
+            return res.status(400).send("Id is missing");
+
+        const getProblem=await Problem.findById(id);
+
+        if(!getProblem)
+            return res.status(404).send("Problem is Missing");
+
+        res.status(200).send(getProblem);
+    }
+    catch(err){
+        res.status(404).send(err);
+    }
+}
+
+const getAllProblem=async(req,res)=>{
+
+    try{
+        const getProblem=await Problem.find({});
+
+        if(getProblem.length==0) 
+            return res.status(404).send("Problem is Missing");
+
+        res.status(200).send(getProblem);
+    }
+    catch(err){
+        res.status(404).send(err);
+    }
+}
+
+
+
+
+
+module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems};
