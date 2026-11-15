@@ -165,8 +165,12 @@ const getAllProblem=async(req,res)=>{
     }
 }
 
+const solvedAllProblembyUser=async(req,res)=>{
+     
+}
 
 
 
 
-module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems};
+
+module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblembyUser};

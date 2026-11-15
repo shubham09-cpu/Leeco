@@ -1,6 +1,6 @@
 const express=require('express');
 const adminMiddleware=require("../middleware/adminmiddleware")
-const {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems}=require("../controller/userProblem");
+const {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblembyUser}=require("../controller/userProblem");
 const userMiddleware=require("../middleware/usermiddleware");
 
 const problemRouter=express.Router();
