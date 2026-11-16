@@ -2,6 +2,7 @@ const { getLanguageById, submitBatch, submitToken } = require("../utils/Problemu
 const Problem = require("../models/problem");
 
 const createProblem = async (req, res) => {
+
     const {
         title,
         description,
@@ -13,8 +14,11 @@ const createProblem = async (req, res) => {
         referenceSolution,
     } = req.body;
 
+
     try {
+
         for (const { language, CompleteCode } of referenceSolution) {
+
             const languageId = getLanguageById(language);
 
             if (!languageId) {
@@ -33,9 +37,11 @@ const createProblem = async (req, res) => {
             const testResult = await submitToken(resultToken);
 
             for (const test of testResult) {
+                
                 if (test.status_id != 3) {
                     return res.status(400).send(`Test case failed with status: ${test.status?.description || test.status_id}`);
                 }
+
             }
         }
 
@@ -105,7 +111,6 @@ const updateProblem = async (req, res) => {
         const newProblem = await Problem.findByIdAndUpdate(id,{...req.body},{runValidators:true,new:true});
         res.status(200).send(newProblem);
 
-
     }
     catch (err) {
         res.status(500).send(err);
@@ -124,7 +129,7 @@ const deleteProblem=async(req,res)=>{
         if(!deletedProblem)
             return res.status(404).send("Problem is Missing");
 
-        res.status(200).send(deleteProblem);
+        res.status(200).send("Deleted Successfully");
     }
     catch(err){
         res.status(404).send(err);
@@ -138,7 +143,7 @@ const getProblemById=async(req,res)=>{
         if(!id)
             return res.status(400).send("Id is missing");
 
-        const getProblem=await Problem.findById(id);
+        const getProblem=await Problem.findById(id).select('_id title description diffculty tags visibleTestCases startCode referenceSolution');
 
         if(!getProblem)
             return res.status(404).send("Problem is Missing");
@@ -153,7 +158,7 @@ const getProblemById=async(req,res)=>{
 const getAllProblem=async(req,res)=>{
 
     try{
-        const getProblem=await Problem.find({});
+        const getProblem=await Problem.find({}).select('_id title difficulty');
 
         if(getProblem.length==0) 
             return res.status(404).send("Problem is Missing");
@@ -165,12 +170,14 @@ const getAllProblem=async(req,res)=>{
     }
 }
 
-const solvedAllProblembyUser=async(req,res)=>{
-     
-}
+// const solvedAllProblembyUser=async(req,res)=>{
+    
+    
+
+// }
 
 
 
 
 
-module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblembyUser};
+module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem};
