@@ -69,7 +69,7 @@ const updateProblem = async (req, res) => {
     try {
 
         if(!id){
-            return res.status(400).send("Missing IF Field");
+            return res.status(400).send("Missing ID Field");
         }
 
         const DsaProblem = await Problem.findById(id);

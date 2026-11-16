@@ -13,6 +13,6 @@ problemRouter.delete("/delete/:id",adminMiddleware,deleteProblem);
 //User API endpoints
 problemRouter.get("/problemById/:id",userMiddleware,getProblemById);
 problemRouter.get("/getAllProblem",userMiddleware,getAllProblems);
-problemRouter.get("/problemSolvedByUser",userMiddleware,solvedAllProblembyUser);
+// problemRouter.get("/problemSolvedByUser",userMiddleware,solvedAllProblembyUser);
 
 module.exports=problemRouter;
