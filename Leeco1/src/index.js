@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const authRouter = require("./Routes/userAuth");
 const redisClient = require('./config/redis');
 const problemRouter=require("./Routes/problemCreator");
+const submitRouter=require("./Routes/submit");
 
 const PORT = process.env.PORT;
 
@@ -14,28 +15,7 @@ app.use(cookieParser());
 
 app.use('/user', authRouter);
 app.use('/problem',problemRouter);
-
-const InitializeConnection = async () => {
-    try {
-        await Promise.all([main(), redisClient.connect()]);
-        console.log("DB Connected");
-
-        app.listen(PORT, () => {
-            const express = require('express');
-const app = express();
-require('dotenv').config();
-const main = require('./config/db');
-const cookieParser = require('cookie-parser');
-const authRouter = require("./Routes/userAuth");
-const redisClient = require('./config/redis');
-
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use(cookieParser());
-
-app.use('/user', authRouter);
-
+app.use('/submission',submitRouter);
 const InitializeConnection = async () => {
     try {
         const redisConnectPromise = redisClient.isOpen ? Promise.resolve() : redisClient.connect();
@@ -49,22 +29,6 @@ const InitializeConnection = async () => {
     catch(err){
         console.log("Error "+err);
         process.exit(1);
-    }
-}
-
-InitializeConnection();
-
-// main()
-//     .then(() => {
-//         app.listen(process.env.PORT, () => {
-//             console.log("Server running at Port " + process.env.PORT);
-//         })
-//     })
-//     .catch((err) => console.log("Error Occurred" + err));
-        })
-    }
-    catch(err){
-        console.log("Error "+err);
     }
 }
 
