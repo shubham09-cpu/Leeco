@@ -1,6 +1,6 @@
 const express=require('express');
 const adminMiddleware=require("../middleware/adminmiddleware")
-const {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem}=require("../controller/userProblem");
+const {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem,problemSolvedByuser}=require("../controller/userProblem");
 const userMiddleware=require("../middleware/usermiddleware");
 
 const problemRouter=express.Router();
@@ -13,6 +13,6 @@ problemRouter.delete("/delete/:id",adminMiddleware,deleteProblem);
 //User API endpoints
 problemRouter.get("/problemById/:id",userMiddleware,getProblemById);
 problemRouter.get("/getAllProblem",userMiddleware,getAllProblem);
-// problemRouter.get("/problemSolvedByUser",userMiddleware,solvedAllProblembyUser);
+problemRouter.get("/problemSolvedByUser",userMiddleware,problemSolvedByuser);
 
 module.exports=problemRouter;

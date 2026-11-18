@@ -71,10 +71,62 @@ const submitCode = async (req, res) => {
         submittedResult.memory = memory;
 
         await submittedResult.save();
+        //Problem ID ko insert krenge userSchema ke problem Solved men if problem solved
+        if(!req.result.problemSolved.includes(problemId)){
+            req.result.problemSolved.push(problemId);
+            await req.result.save();
+        }
         res.status(201).send(submittedResult);
     } catch (err) {
         res.status(500).send("Internal Server Error: " + err.message);
     }
 };
 
-module.exports = { submitCode };
+const runCode=async(req,res)=>{
+    try {
+        const userId = req.result._id;
+        const problemId = req.params.id;
+        const { code, language } = req.body;
+
+        if (!userId || !code || !problemId || !language) {
+            return res.status(400).send("Some Field Missing");
+        }
+
+        const problem = await Problem.findById(problemId);
+        if (!problem) {
+            return res.status(404).send("Problem not found");
+        }
+
+        const languageId = getLanguageById(language);
+        if (!languageId) {
+            return res.status(400).send(`Unsupported language: ${language}`);
+        }
+
+        // const submittedResult = await Submission.create({
+        //     userId,
+        //     problemId,
+        //     code,
+        //     language,
+        //     testCasesPassed: 0,
+        //     status: 'pending',
+        //     testCasesTotal: problem.hiddenTestCases.length
+        // });
+
+        const submissions = problem.visibleTestCases.map((testcase) => ({
+            source_code: code,
+            language_id: languageId,
+            stdin: testcase.input,
+            expected_output: testcase.output,
+        }));
+
+        const submitResult = await submitBatch(submissions);
+        const resultToken = submitResult.map((value) => value.token);
+        const testResult = await submitToken(resultToken);
+
+        res.status(201).send(testResult);
+    } catch (err) {
+        res.status(500).send("Internal Server Error: " + err.message);
+    }
+}
+
+module.exports = { submitCode,runCode };

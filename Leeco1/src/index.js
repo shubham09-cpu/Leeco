@@ -16,6 +16,7 @@ app.use(cookieParser());
 app.use('/user', authRouter);
 app.use('/problem',problemRouter);
 app.use('/submission',submitRouter);
+
 const InitializeConnection = async () => {
     try {
         const redisConnectPromise = redisClient.isOpen ? Promise.resolve() : redisClient.connect();
