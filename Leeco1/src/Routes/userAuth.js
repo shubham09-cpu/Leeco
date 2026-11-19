@@ -12,7 +12,7 @@ authRouter.post('/login',login);
 //Logout
 authRouter.post('/logout',userMiddleware,logout);
 authRouter.post('/admin/register',adminMiddleware,adminRegister); 
-authRouter.delete('/profile',userMiddleware,deleteProfile);
+authRouter.delete('/deleteProfile',userMiddleware,deleteProfile);
 //GetProfile
 // authRouter.post('/getProfile',getProfile);
 
