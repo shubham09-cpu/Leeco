@@ -14,7 +14,7 @@ const submissionSchema=new Schema({
     },
     code:{
         type:String,
-        required:true
+        required:true 
     },
     language:{
         type:String,
@@ -49,6 +49,9 @@ const submissionSchema=new Schema({
 },{
     timestamps:true
 })
+
+submissionSchema.index({userId:1,problemId:1});
+//1 means arranged in ascending order 
 
 const Submission=mongoose.model('submission',submissionSchema);
 module.exports=Submission; 
