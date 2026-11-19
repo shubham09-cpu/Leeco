@@ -3,7 +3,7 @@ const userMiddleware=require("../middleware/usermiddleware");
 const adminMiddleware=require("../middleware/adminmiddleware");
 
 const authRouter = express.Router();
-const {register,login,logout,adminRegister}=require('../controller/userAuthent');
+const {register,login,logout,adminRegister,deleteProfile}=require('../controller/userAuthent');
 
 //Register
 authRouter.post('/register',register);
@@ -12,6 +12,7 @@ authRouter.post('/login',login);
 //Logout
 authRouter.post('/logout',userMiddleware,logout);
 authRouter.post('/admin/register',adminMiddleware,adminRegister); 
+authRouter.delete('/profile',userMiddleware,deleteProfile);
 //GetProfile
 // authRouter.post('/getProfile',getProfile);
 
